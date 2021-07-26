@@ -2,7 +2,6 @@ package model
 
 import (
 	"errors"
-	"fmt"
 	redigo "github.com/gomodule/redigo/redis"
 	"log"
 	"time"
@@ -43,18 +42,22 @@ func PoolInitRedis(server string, password string) *redigo.Pool {
 	}
 }
 
+// redis 初始化
 func Init() {
-	var addr = "127.0.0.1:6379"
+	//var addr = "127.0.0.1:6379"
 	//var addr = "redis:6379"
-	var password = "123456"
+	//var password = "123456"
+	addr, err := GetKey("main-redis", "Host")
+	if err != nil {
+		addr = "127.0.0.1:6379"
+	}
+	password, err := GetKey("main-redis", "Password")
+	if err != nil {
+		password = ""
+	}
+	log.Println("---redis", addr, password)
 	//var password = ""
 	RedisPool = PoolInitRedis(addr, password)
-	// 测试
-	conn := RedisPool.Get()
-	res, err := redigo.String(conn.Do("set", "qq", "start"))
-	log.Println("--res", res, err)
-	res, err = redigo.String(conn.Do("get", "qq"))
-	log.Println("-2-res", res, err)
 }
 
 // 加锁
@@ -92,27 +95,4 @@ func Unlock(value string) (err error) {
 	//属于该用户，直接删除该key
 	_, err = c.Do("DEL", "lock_key")
 	return
-}
-
-func GetAction() {
-	count := 1
-	for i := 1; i <= 10; i++ {
-		log.Println("--test")
-	RETRY:
-		count += 1
-		lock, err := Lock()
-		log.Println("-err", lock, err)
-		if !lock {
-			// 取消设置
-			if count > 10 {
-				return
-			}
-			//return
-			// 重试
-			goto RETRY
-		}
-		log.Println("--ll", i)
-		log.Println("-2-ll", i)
-	}
-	fmt.Printf("end")
 }
