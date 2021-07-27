@@ -7,10 +7,6 @@ import (
 	"time"
 )
 
-/**
-redis 初始化
-*/
-
 var (
 	RedisPool *redigo.Pool
 )

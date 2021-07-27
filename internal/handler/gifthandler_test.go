@@ -10,6 +10,8 @@ import (
 var Code = ""
 
 func init() {
+	filepath := "../../config/app.ini"
+	model.GetAppIni(filepath)
 	model.Init()
 }
 
