@@ -21,15 +21,15 @@ const (
 
 // 礼品码数据结构
 type CreateGiftModels struct {
-	Code       string `form:"code" binding:""`
-	CodeType   int    `form:"codeType" binding:"required"`
-	DrawCount  int    `form:"drawCount" binding:"required"`
-	Des        string `form:"des" binding:"required"`
-	ValidTime  int64  `form:"validTime" binding:"required"`
-	Content    string `form:"content" binding:"required"`
-	CreateUser string `form:"createUser" binding:"required"`
-	CostCount  int    `form:"costCount" binding:""`
-	UserId     int    `form:"userId" binding:"required"`
+	Code       string `form:"code" binding:""`               // 礼品码
+	CodeType   int    `form:"codeType" binding:"required"`   //礼品码类型，1-指定用户一次性消耗，2-不指定用户限制兑换次数，3-不限用户不限次数兑换
+	DrawCount  int    `form:"drawCount" binding:"required"`  //可领取次数
+	Des        string `form:"des" binding:"required"`        //描述
+	ValidTime  int64  `form:"validTime" binding:"required"`  //过期时间戳
+	Content    string `form:"content" binding:"required"`    //奖品内容
+	CreateUser string `form:"createUser" binding:"required"` //创建着
+	CostCount  int    `form:"costCount" binding:""`          //已领取次数
+	UserId     int    `form:"userId" binding:""`             //知道用户
 }
 
 // 领取限制次数的礼品码

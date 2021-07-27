@@ -63,7 +63,28 @@ liqianqian@liqianqian giftServer % tree
 
 ## 4.存储设计
 
-无
+礼品码信息：
+
+| 内容         | 数据库 | Key        | 类型 | 说明 |
+| ------------ | ------ | ---------- | ---- | ---- |
+| 礼品码       | redis  | Code       | Hash |      |
+| 礼品码类型   | redis  | CodeType   | Hash |      |
+| 可领取次数   | redis  | DrawCount  | Hash |      |
+| 有效期时间戳 | redis  | ValidTime  | Hash |      |
+| 奖品内容     | redis  | Content    | Hash |      |
+| 管理员       | redis  | CreateUser | Hash |      |
+| 已领取次数   | redis  | CostCount  | Hash |      |
+| 指定玩家     | redis  | UserId     | Hash |      |
+|              |        |            |      |      |
+
+礼品码：限制次数类型的存储
+
+| 内容   | 数据库 | Key       | 类型   | 说明 |      |
+| ------ | ------ | --------- | ------ | ---- | ---- |
+| 礼品码 | redis  | Code+type | String |      |      |
+|        |        |           |        |      |      |
+
+
 
 ## 5.接口设计供客户端调用的接口
 
@@ -87,7 +108,7 @@ http post
 		"validTime":16345634354545,//有效期，时间戳
 		"content":"{"1":1000,"2":10000}",	// 内容，json字符串，{id:count}。示例 - 金币goldId 1:数量1
 		"createUser":"qq",	// 创建者
-		"UserId":"123456",	// 礼品码类型，1-指定用户一次性消耗的用户
+		"userId":"123456",	// 礼品码类型，1-指定用户一次性消耗的用户
 }
 ```
 
@@ -118,7 +139,7 @@ http post
 
 接口地址：
 
-127.0.0.1:8000/createGift
+127.0.0.1:8000/getGift
 
 请求参数：
 

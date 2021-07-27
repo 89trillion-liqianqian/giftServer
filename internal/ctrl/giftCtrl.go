@@ -8,6 +8,11 @@ import (
 	"log"
 )
 
+const (
+	CodeSuccessful = 0 // 成功返回
+	CodeErr        = 1
+)
+
 // 测试ping
 func PingFunc(c *gin.Context) {
 	c.JSON(200, gin.H{
@@ -22,26 +27,26 @@ func CreateGift(c *gin.Context) {
 	var formData model.CreateGiftModels
 	if err := c.ShouldBind(&formData); err != nil {
 		log.Println("--CreateGift err", err)
-		msg = "参数错误，管理后台-创建礼品码"
-		myerr.ResponseErr(c, msg)
+		msg = "参数名称错误"
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	// 参数校验
 	if !(formData.CodeType == model.CodeTypeOne || formData.CodeType == model.CodeTypeTwo || formData.CodeType == model.CodeTypeThree) {
-		msg = "参数错误,礼品码类型：1-指定用户一次性消耗，2-不指定用户限制兑换次数，3-不限用户不限次数兑换"
+		msg = "参数类型错误,礼品码类型：1-指定用户一次性消耗，2-不指定用户限制兑换次数，3-不限用户不限次数兑换"
 		log.Println("--CreateGift err", msg)
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	// 创建礼品码
 	code, err := handler.CreateGiftHandler(formData)
 	if err != nil {
 		msg = "创建礼品码失败，redis失败，请确认"
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	c.JSON(200, gin.H{
-		"code": 0,
+		"code": CodeSuccessful,
 		"msg":  msg,
 		"data": code,
 	})
@@ -55,23 +60,23 @@ func GetGift(c *gin.Context) {
 	// 校验参数
 	if len(code) != 8 {
 		msg = "err 礼品码是八位字符串"
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	// 读取数据
 	giftData, err := handler.GetGiftHandler(code)
 	if err != nil {
 		msg = "查询礼品码失败，redis失败，请确认 "
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	if len(giftData) < 1 {
 		msg = "查询礼品码失败，礼品码不存在，请确认"
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	c.JSON(200, gin.H{
-		"code": 0,
+		"code": CodeSuccessful,
 		"msg":  msg,
 		"data": giftData,
 	})
@@ -86,22 +91,22 @@ func CheckCode(c *gin.Context) {
 	if code == "" || uid == "" {
 		log.Println("--CheckCode-code", code, uid)
 		msg = "验证礼品码 。参数错误"
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	// 读取数据
 	content, msg, err := handler.GetGiftRewardHandler(uid, code)
 	if err != nil {
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	if len(content) < 1 {
 		msg += "获取失败"
-		myerr.ResponseErr(c, msg)
+		myerr.ResponseErr(c, msg, CodeErr)
 		return
 	}
 	c.JSON(200, gin.H{
-		"code": 0,
+		"code": CodeSuccessful,
 		"msg":  msg,
 		"data": content,
 	})
